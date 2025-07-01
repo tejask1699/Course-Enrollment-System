@@ -5,7 +5,7 @@ import { NextRequest, NextResponse } from "next/server";
 const dummyUser = {
   email:"test@gmail.com",
   password: bcrypt.hashSync("password123", 10),
-  userId:"23456"
+  userId:"234578"
 }
 
 const JWT_SERECT = process.env.JWT_SERECT || "yoursecretkey"
