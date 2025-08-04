@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -10,6 +10,7 @@ import { Eye, EyeOff, Loader2 } from "lucide-react";
 import AuthFooter from "@/components/auth/auth-footer";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface RegisterData {
   name: string;
@@ -24,6 +25,7 @@ const Register = () => {
     register,
     handleSubmit,
     watch,
+    control,
     formState: { errors },
   } = useForm<RegisterData>();
   const [showPassword, setShowPassword] = useState(false);
@@ -35,10 +37,10 @@ const Register = () => {
   const onSubmit = async (data: RegisterData) => {
     setLoading(true);
     const formattedData = {
-      name: data.name,
+      username: data.name,
       password: data.password,
       email: data.email,
-      role:"admin"
+      role: data.role
     };
 
     try {
@@ -51,7 +53,6 @@ const Register = () => {
       });
 
       if (res.ok) {
-        // same as res.status >= 200 && res.status < 300
         const Userdata = await res.json();
         localStorage.setItem("token", Userdata.token);
         setLoading(false);
@@ -166,9 +167,8 @@ const Register = () => {
                   id="confirm_password"
                   type={showConfirmPassword ? "text" : "password"}
                   placeholder="Confirm your password"
-                  className={`${
-                    errors.confirm_password ? "border-red-500" : ""
-                  }`}
+                  className={`${errors.confirm_password ? "border-red-500" : ""
+                    }`}
                   {...register("confirm_password", {
                     required: "Confirm Password is required",
                     validate: (value) =>
@@ -193,6 +193,30 @@ const Register = () => {
                     {errors.confirm_password.message}
                   </p>
                 )}
+              </div>
+
+              {/* Email Field */}
+              <div>
+                <Label htmlFor="Role">Role</Label>
+                <Controller
+                  name="role"
+                  control={control}
+                  rules={{ required: "Please select Role" }}
+                  render={() => (
+                    <Select>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select a Role" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          <SelectLabel>Role</SelectLabel>
+                          <SelectItem value="admin">Admin</SelectItem>
+                          <SelectItem value="student">Student</SelectItem>
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
               </div>
 
               {/* Submit Button */}
