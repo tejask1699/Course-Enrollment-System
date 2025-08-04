@@ -27,6 +27,17 @@ export async function POST(req: NextRequest) {
         { status: 409 }
       );
     }
+    if (role === "admin") {
+      const roleExist = await prisma.user.findFirst({
+        where: { role: "admin" },
+      });
+      if (roleExist) {
+        return NextResponse.json(
+          { message: "Maximum of 2 admins allowed" },
+          { status: 403 }
+        );
+      }
+    }
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
