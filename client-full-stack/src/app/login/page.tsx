@@ -12,8 +12,8 @@ import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
 
 interface LoginData {
-    user_email: string
-    user_password: string
+    email: string
+    password: string
 }
 
 const Login = () => {
@@ -36,8 +36,9 @@ const Login = () => {
             if (res.status === 200) {
                 const Userdata = await res.json()
                 localStorage.setItem("token", Userdata.token)
-                localStorage.setItem("userID", Userdata.user.id)
-                localStorage.setItem("userName", Userdata.user.user_name)
+                localStorage.setItem("userID", Userdata.id)
+                localStorage.setItem("userName", Userdata.name)
+                localStorage.setItem("role", Userdata.role)
                 setLoading(false)
                 toast.success("Login successful")
                 router.push('/dashboard')
@@ -67,13 +68,13 @@ const Login = () => {
                         <div className="space-y-4">
                             {/* Email Field */}
                             <div>
-                                <Label htmlFor="user_email">Email</Label>
+                                <Label htmlFor="email">Email</Label>
                                 <Input
-                                    id="user_email"
+                                    id="email"
                                     type="email"
                                     placeholder="Enter your email"
-                                    className={`${errors.user_email ? 'border-red-500' : ''}`}
-                                    {...register('user_email', {
+                                    className={`${errors.email ? 'border-red-500' : ''}`}
+                                    {...register('email', {
                                         required: 'Email is required',
                                         pattern: {
                                             value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
@@ -81,20 +82,20 @@ const Login = () => {
                                         },
                                     })}
                                 />
-                                {errors.user_email && (
-                                    <p className="text-red-600 text-sm mt-1">{errors.user_email.message}</p>
+                                {errors.email && (
+                                    <p className="text-red-600 text-sm mt-1">{errors.email.message}</p>
                                 )}
                             </div>
 
                             {/* Password Field with Toggle */}
                             <div className="relative">
-                                <Label htmlFor="user_password">Password</Label>
+                                <Label htmlFor="password">Password</Label>
                                 <Input
-                                    id="user_password"
+                                    id="password"
                                     type={showPassword ? 'text' : 'password'}
                                     placeholder="Enter your password"
-                                    className={`${errors.user_password ? 'border-red-500' : ''}`}
-                                    {...register('user_password', {
+                                    className={`${errors.password ? 'border-red-500' : ''}`}
+                                    {...register('password', {
                                         required: 'Password is required',
                                     })}
                                 />
@@ -107,8 +108,8 @@ const Login = () => {
                                 >
                                     {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                                 </button>
-                                {errors.user_password && (
-                                    <p className="text-red-600 text-sm mt-1">{errors.user_password.message}</p>
+                                {errors.password && (
+                                    <p className="text-red-600 text-sm mt-1">{errors.password.message}</p>
                                 )}
                             </div>
 

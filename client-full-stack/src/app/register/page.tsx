@@ -17,7 +17,7 @@ interface RegisterData {
   email: string;
   password: string;
   confirm_password: string;
-  role: "admin" | "student";
+  role: string;
 }
 
 const Register = () => {
@@ -33,7 +33,6 @@ const Register = () => {
   const [loading, setLoading] = useState(false);
 
   const router = useRouter();
-
   const onSubmit = async (data: RegisterData) => {
     setLoading(true);
     const formattedData = {
@@ -53,11 +52,10 @@ const Register = () => {
       });
 
       if (res.ok) {
-        const Userdata = await res.json();
-        localStorage.setItem("token", Userdata.token);
+        // const Userdata = await res.json();
         setLoading(false);
         toast.success("Registered successfully");
-        router.push("/dashboard");
+        router.push("/login");
       } else {
         const errorData = await res.json();
         setLoading(false);
@@ -195,15 +193,18 @@ const Register = () => {
                 )}
               </div>
 
-              {/* Email Field */}
+              {/* Role Field */}
               <div>
                 <Label htmlFor="Role">Role</Label>
                 <Controller
                   name="role"
                   control={control}
                   rules={{ required: "Please select Role" }}
-                  render={() => (
-                    <Select>
+                  render={({ field }) => (
+                    <Select
+                      onValueChange={field.onChange}
+                      value={field.value}
+                    >
                       <SelectTrigger className="w-full">
                         <SelectValue placeholder="Select a Role" />
                       </SelectTrigger>
@@ -217,6 +218,12 @@ const Register = () => {
                     </Select>
                   )}
                 />
+
+                {errors.role && (
+                  <p className="text-red-600 text-sm mt-1">
+                    {errors.role.message}
+                  </p>
+                )}
               </div>
 
               {/* Submit Button */}

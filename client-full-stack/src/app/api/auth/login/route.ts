@@ -8,20 +8,21 @@ const JWT_SECRET = process.env.JWT_SECRET || "yoursecretkey"
 
 export async function POST(req: NextRequest) {
   try {
-    const { user_email, user_password } = await req.json()
+    const { email, password } = await req.json()
 
-    if (!user_email || !user_password) {
+    if (!email || !password) {
       return NextResponse.json({ message: "Email and password required" }, { status: 400 })
     }
 
     // Fetch user from DB
     const user = await prisma.user.findUnique({
-      where: { email: user_email },
-      select:{
-        id:true,
-        username:true,
-        email:true,
-        role:true
+      where: { email: email },
+      select: {
+        id: true,
+        username: true,
+        email: true,
+        password: true,
+        role: true
       }
     })
 
@@ -30,7 +31,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Compare hashed passwords
-    const isMatch = await bcrypt.compare(user_password, user.password)
+    const isMatch = await bcrypt.compare(password, user.password)
 
     if (!isMatch) {
       return NextResponse.json({ message: "Invalid Password" }, { status: 401 })
@@ -38,12 +39,12 @@ export async function POST(req: NextRequest) {
 
     // Generate JWT token
     const token = jwt.sign(
-      { userId: user.id, email: user.email, role:user.role },
+      { userId: user.id, email: user.email, role: user.role },
       JWT_SECRET,
       { expiresIn: "3h" }
     )
 
-    return NextResponse.json({ message: "Login Successful", token, role: user.role }, { status: 200 })
+    return NextResponse.json({ message: "Login Successful", token, id:user.id, name:user.username, role:user.role }, { status: 200 })
   } catch (err) {
     console.error("Login Error", err)
     return NextResponse.json({ message: "Internal Server Error" }, { status: 500 })
