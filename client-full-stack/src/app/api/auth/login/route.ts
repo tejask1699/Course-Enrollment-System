@@ -16,7 +16,13 @@ export async function POST(req: NextRequest) {
 
     // Fetch user from DB
     const user = await prisma.user.findUnique({
-      where: { email: user_email }
+      where: { email: user_email },
+      select:{
+        id:true,
+        username:true,
+        email:true,
+        role:true
+      }
     })
 
     if (!user) {
@@ -32,12 +38,12 @@ export async function POST(req: NextRequest) {
 
     // Generate JWT token
     const token = jwt.sign(
-      { userId: user.id, email: user.email },
+      { userId: user.id, email: user.email, role:user.role },
       JWT_SECRET,
-      { expiresIn: "1h" }
+      { expiresIn: "3h" }
     )
 
-    return NextResponse.json({ message: "Login Successful", token }, { status: 200 })
+    return NextResponse.json({ message: "Login Successful", token, role: user.role }, { status: 200 })
   } catch (err) {
     console.error("Login Error", err)
     return NextResponse.json({ message: "Internal Server Error" }, { status: 500 })
