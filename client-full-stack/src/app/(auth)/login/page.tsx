@@ -15,10 +15,9 @@ interface LoginData {
     email: string
     password: string
 }
-
 const Login = () => {
     const router = useRouter()
-    const { register, handleSubmit, formState: { errors } } = useForm<LoginData>()
+    const { register, handleSubmit, formState: { errors }, setValue } = useForm<LoginData>()
     const [showPassword, setShowPassword] = useState(false)
     const [loading, setLoading] = useState(false)
 
@@ -41,7 +40,8 @@ const Login = () => {
                 localStorage.setItem("role", Userdata.role)
                 setLoading(false)
                 toast.success("Login successful")
-                router.push('/dashboard')
+                Userdata.role === 'admin' ? router.push('/admin/dashboard') : router.push('/dashboard')
+
             } else {
                 toast.error("Login failed. Please check your credentials.")
                 setLoading(false)
@@ -58,6 +58,17 @@ const Login = () => {
         }
     }
 
+    const handleQuickLogin = (role: "admin" | "student") => {
+        const userData =
+            role === "admin"
+                ? { email: "t.kelaskar16@gmail.com", password: "123456" }
+                : { email: "t.kelaskarStud16@gmail.com", password: "tk123456" }
+
+        setValue('email', userData.email)
+        setValue('password', userData.password)
+
+        handleSubmit(onSubmit)()
+    }
 
     return (
         <div className="flex flex-col items-center justify-center h-[100vh] bg-gray-50">
@@ -130,6 +141,24 @@ const Login = () => {
                         </div>
                     </form>
                     <AuthFooter type="login" />
+
+                    <div className="relative my-4">
+                        <div className="absolute inset-0 flex items-center">
+                            <span className="w-full border-t" />
+                        </div>
+                        <div className="relative flex justify-center text-xs uppercase">
+                            <span className="bg-background px-2 text-muted-foreground">Or quick login as</span>
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-2">
+                        <Button variant="outline" onClick={() => handleQuickLogin("admin")}>
+                            Admin Demo
+                        </Button>
+                        <Button variant="outline" onClick={() => handleQuickLogin("student")}>
+                            Student Demo
+                        </Button>
+                    </div>
                 </CardContent>
             </Card>
         </div >

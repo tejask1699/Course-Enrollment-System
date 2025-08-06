@@ -3,11 +3,11 @@ import { DashboardCard } from "@/components/dashboard/dashboard-card";
 import { Button } from "@/components/ui/button";
 import { Plus, BookOpen, User, Layers, FileText } from "lucide-react";
 
-export default function StudenDashboard() {
+export default function Dashboard() {
   return (
     <div className="p-6 space-y-6">
       {/* Heading */}
-      <h1 className="text-2xl font-bold">Student Dashboard</h1>
+      <h1 className="text-2xl font-bold">Admin Dashboard</h1>
 
       {/* Overview Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
