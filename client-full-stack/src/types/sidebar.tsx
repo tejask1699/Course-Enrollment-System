@@ -2,13 +2,10 @@ import {
   BookOpen,
   GraduationCap,
   Trophy,
-  Calendar,
   Users,
   BarChart3,
   Shield,
   FileText,
-  DollarSign,
-  UserCheck,
   Brain
 } from "lucide-react"
 
@@ -39,22 +36,6 @@ export const adminItems = [
     gradient: "from-green-500 to-emerald-600"
   },
   {
-    title: "Instructor Panel",
-    url: "/admin/instructors",
-    icon: UserCheck,
-    description: "Manage instructors",
-    count: 28,
-    gradient: "from-orange-500 to-red-600"
-  },
-  {
-    title: "Financial Reports",
-    url: "/admin/finance",
-    icon: DollarSign,
-    description: "Revenue & payments",
-    badge: "Updated",
-    gradient: "from-yellow-500 to-orange-600"
-  },
-  {
     title: "System Settings",
     url: "/admin/settings",
     icon: Shield,
@@ -66,32 +47,25 @@ export const adminItems = [
 // Student-specific navigation items
 export const studentItems = [
   {
-    title: "Course Catalog",
-    url: "/dashboard",
-    icon: BookOpen,
-    description: "Browse courses",
-    badge: "New",
-    gradient: "from-blue-500 to-purple-600"
-  },
-  {
-    title: "My Learning",
-    url: "/my-courses",
+    title: "Dashboard",
+    url: "/user",
     icon: GraduationCap,
     description: "Current courses",
     progress: 65,
     gradient: "from-green-500 to-teal-600"
   },
   {
-    title: "Class Schedule",
-    url: "/schedule",
-    icon: Calendar,
-    description: "Upcoming classes",
-    upcoming: 3,
-    gradient: "from-orange-500 to-red-600"
+    title: "Course Catalog",
+    url: "/user/catalog",
+    icon: BookOpen,
+    description: "Browse courses",
+    badge: "New",
+    gradient: "from-blue-500 to-purple-600"
   },
+  
   {
     title: "Achievements",
-    url: "/achievements",
+    url: "/user/achievements",
     icon: Trophy,
     description: "Badges & certificates",
     count: 12,
@@ -99,7 +73,7 @@ export const studentItems = [
   },
   {
     title: "Study Materials",
-    url: "/materials",
+    url: "/user/materials",
     icon: FileText,
     description: "Notes & resources",
     badge: "Updated",
@@ -107,7 +81,7 @@ export const studentItems = [
   },
   {
     title: "Practice Tests",
-    url: "/tests",
+    url: "/user/tests",
     icon: Brain,
     description: "Quizzes & assessments",
     count: 8,

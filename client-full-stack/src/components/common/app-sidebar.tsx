@@ -1,6 +1,6 @@
-'use client'
+"use client";
 
-import { LogOut, Sparkles, Clock, Shield } from "lucide-react"
+import { LogOut, Sparkles, Clock, Shield } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -11,27 +11,29 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar"
-import { Button } from "../ui/button"
-import { useRouter, usePathname } from "next/navigation"
-import clsx from "clsx"
-import { adminItems, adminStats, studentItems, studentStats } from "../../../types/sidebar"
-
-
+} from "@/components/ui/sidebar";
+import { Button } from "../ui/button";
+import { useRouter, usePathname } from "next/navigation";
+import clsx from "clsx";
+import { adminItems,studentItems} from "../../types/sidebar";
+import { useEffect, useState } from "react";
+import Link from "next/link";
 
 export function AppSidebar() {
-  const router = useRouter()
-  const pathname = usePathname()
+  const router = useRouter();
+  const pathname = usePathname();
 
-  let userRole = 'student';
+  const [userRole, setUserRole] = useState<"admin" | "student">();
 
-  if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
-    userRole = localStorage.getItem('role') || 'student';
-  }
+  useEffect(() => {
+    const role = localStorage.getItem("role") as "admin" | "student";
+    if (role) {
+      setUserRole(role);
+    }
+  }, []);
 
-  const isAdmin = userRole === 'admin'
-  const mainItems = isAdmin ? adminItems : studentItems
-  const quickStats = isAdmin ? adminStats : studentStats
+  const isAdmin = userRole === "admin";
+  const mainItems = isAdmin ? adminItems : studentItems;
 
   // Role-specific header content
   const getHeaderContent = () => {
@@ -39,15 +41,15 @@ export function AppSidebar() {
       return {
         title: "Course Enrollment System",
         subtitle: "Admin Dashboard",
-        bgGradient: "from-purple-500 to-indigo-600"
-      }
+        bgGradient: "from-purple-500 to-indigo-600",
+      };
     }
     return {
       title: "Course Enrollment System",
       subtitle: "Student Portal",
-      bgGradient: "from-blue-500 to-purple-600"
-    }
-  }
+      bgGradient: "from-blue-500 to-purple-600",
+    };
+  };
 
   // Role-specific stats display
   // const renderStats = () => {
@@ -104,18 +106,18 @@ export function AppSidebar() {
       return {
         label: "Admin session",
         value: "4h 12m",
-        description: "Active today"
-      }
+        description: "Active today",
+      };
     }
     return {
       label: "Study time today",
       value: "2h 45m",
-      description: "Keep it up!"
-    }
-  }
+      description: "Keep it up!",
+    };
+  };
 
-  const headerContent = getHeaderContent()
-  const footerContent = getFooterContent()
+  const headerContent = getHeaderContent();
+  const footerContent = getFooterContent();
 
   return (
     <Sidebar className="w-70 bg-gradient-to-b from-slate-50 to-white border-r border-gray-200 min-h-screen shadow-lg">
@@ -124,13 +126,23 @@ export function AppSidebar() {
           {/* Header with Logo */}
           <div className="px-6 py-4 border-b border-gray-100">
             <div className="flex items-center gap-3">
-              <div className={`w-10 h-10 bg-gradient-to-r ${headerContent.bgGradient} rounded-xl flex items-center justify-center`}>
-                {isAdmin ? <Shield className="w-6 h-6 text-white" /> : <Sparkles className="w-6 h-6 text-white" />}
+              <div
+                className={`w-10 h-10 bg-gradient-to-r ${headerContent.bgGradient} rounded-xl flex items-center justify-center`}
+              >
+                {isAdmin ? (
+                  <Shield className="w-6 h-6 text-white" />
+                ) : (
+                  <Sparkles className="w-6 h-6 text-white" />
+                )}
               </div>
               <div>
-                <h2 className="font-bold text-sm text-gray-900">{headerContent.title}</h2>
+                <h2 className="font-bold text-sm text-gray-900">
+                  {headerContent.title}
+                </h2>
                 <div className="flex items-center gap-2">
-                  <p className="text-xs text-gray-500">{headerContent.subtitle}</p>
+                  <p className="text-xs text-gray-500">
+                    {headerContent.subtitle}
+                  </p>
                   {isAdmin && (
                     <span className="px-2 py-0.5 text-xs font-medium bg-purple-100 text-purple-700 rounded-full">
                       Admin
@@ -157,14 +169,14 @@ export function AppSidebar() {
           {/* Main Navigation */}
           <SidebarGroup>
             <SidebarGroupLabel className="px-6 py-2 text-sm font-semibold text-gray-600 uppercase tracking-wide">
-              {isAdmin ? 'Admin Panel' : 'Learning Hub'}
+              {isAdmin ? "Admin Panel" : "Learning Hub"}
             </SidebarGroupLabel>
             <SidebarGroupContent className="px-4">
               <SidebarMenu className="space-y-2">
                 {mainItems.map((item) => (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton asChild>
-                      <a
+                      <Link
                         href={item.url}
                         className={clsx(
                           "group flex items-center gap-3 p-10 text-sm font-medium rounded-xl transition-all duration-200 relative overflow-hidden",
@@ -175,15 +187,19 @@ export function AppSidebar() {
                       >
                         {/* Gradient background for active state */}
                         {pathname === item.url && (
-                          <div className={`absolute inset-0 bg-gradient-to-r ${item.gradient} opacity-5 rounded-xl`} />
+                          <div
+                            className={`absolute inset-0 bg-gradient-to-r ${item.gradient} opacity-5 rounded-xl`}
+                          />
                         )}
 
-                        <div className={clsx(
-                          "relative z-10 p-2 rounded-lg transition-colors",
-                          pathname === item.url
-                            ? `bg-gradient-to-r ${item.gradient} text-white`
-                            : "bg-gray-100 text-gray-600 group-hover:bg-gray-200"
-                        )}>
+                        <div
+                          className={clsx(
+                            "relative z-10 p-2 rounded-lg transition-colors",
+                            pathname === item.url
+                              ? `bg-gradient-to-r ${item.gradient} text-white`
+                              : "bg-gray-100 text-gray-600 group-hover:bg-gray-200"
+                          )}
+                        >
                           <item.icon className="w-4 h-4" />
                         </div>
 
@@ -206,7 +222,9 @@ export function AppSidebar() {
                               </span>
                             )}
                           </div>
-                          <p className="text-xs text-gray-500 mt-0.5">{item.description}</p>
+                          <p className="text-xs text-gray-500 mt-0.5">
+                            {item.description}
+                          </p>
                           {/* {item.progress && (
                             <div className="mt-2">
                               <div className="flex justify-between text-xs text-gray-500 mb-1">
@@ -222,7 +240,7 @@ export function AppSidebar() {
                             </div>
                           )} */}
                         </div>
-                      </a>
+                      </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 ))}
@@ -271,9 +289,13 @@ export function AppSidebar() {
               <Clock className="w-3 h-3" />
               <span>{footerContent.label}</span>
             </div>
-            <div className="text-lg font-bold text-gray-900">{footerContent.value}</div>
+            <div className="text-lg font-bold text-gray-900">
+              {footerContent.value}
+            </div>
             {footerContent.description && (
-              <div className="text-xs text-gray-500 mt-1">{footerContent.description}</div>
+              <div className="text-xs text-gray-500 mt-1">
+                {footerContent.description}
+              </div>
             )}
           </div>
 
@@ -281,8 +303,8 @@ export function AppSidebar() {
             variant="ghost"
             className="w-full justify-start text-gray-600 hover:bg-red-50 hover:text-red-600 transition-colors group"
             onClick={() => {
-              router.push('/login')
-              localStorage.clear()
+              router.push("/login");
+              localStorage.clear();
             }}
           >
             <LogOut className="w-4 h-4 mr-2 group-hover:scale-110 transition-transform" />
@@ -291,5 +313,5 @@ export function AppSidebar() {
         </SidebarFooter>
       </SidebarContent>
     </Sidebar>
-  )
+  );
 }
