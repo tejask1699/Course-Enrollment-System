@@ -15,7 +15,7 @@ import {
 import { Button } from "../ui/button";
 import { useRouter, usePathname } from "next/navigation";
 import clsx from "clsx";
-import { adminItems,studentItems} from "../../types/sidebar";
+import { adminItems, studentItems } from "../../types/sidebar";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 
@@ -31,6 +31,7 @@ export function AppSidebar() {
       setUserRole(role);
     }
   }, []);
+
 
   const isAdmin = userRole === "admin";
   const mainItems = isAdmin ? adminItems : studentItems;
