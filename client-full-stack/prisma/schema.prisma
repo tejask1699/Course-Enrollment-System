@@ -35,11 +35,18 @@ enum Levels {
 }
 
 model Course {
-  id                 String   @id @default(uuid())
-  course_name        String
-  course_code        String   @unique
-  duration           Int
-  levels             Levels
-  course_description String
-  created_at         DateTime @default(now())
+  id                    String   @id @default(uuid())
+  course_name           String
+  course_code           String   @unique
+  duration              Int
+  levels                Levels
+  course_description    String
+  created_at            DateTime @default(now())
+  demo_video_url        String?
+  category              String
+  max_students          Int
+  is_free               Boolean
+  price                 Int?
+  discount              Int?
+  certificate_available Boolean
 }
