@@ -26,7 +26,7 @@ export interface CourseSchema {
 
 export default function CoursesPage() {
   const [searchTerm, setSearchTerm] = useState("");
-  const { data } = useGetCourse();
+  const { data, refetch } = useGetCourse();
 
   const filteredData = Array.isArray(data)
     ? data.filter(
@@ -47,7 +47,7 @@ export default function CoursesPage() {
           <h1 className="text-3xl font-bold">Manage Courses</h1>
           <p className="text-muted-foreground">Create and edit courses</p>
         </div>
-        <AddCourseDialog />
+        <AddCourseDialog refetch={refetch} />
       </div>
 
       <Card>

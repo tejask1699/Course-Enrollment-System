@@ -14,7 +14,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Plus } from "lucide-react";
+import { Loader2, Plus } from "lucide-react";
 import { useCreateCourse } from "@/hooks/use-courses";
 import {
   Form,
@@ -34,6 +34,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useState } from "react";
 
 export enum Levels {
   Beginner = "Beginner",
@@ -61,8 +62,13 @@ const formSchema = z.object({
 
 export type AddCourseSchema = z.infer<typeof formSchema>;
 
-export function AddCourseDialog() {
-  const { mutate } = useCreateCourse();
+interface Props {
+  refetch: () => void;
+}
+export function AddCourseDialog({ refetch }: Props) {
+  const [open, setOpen] = useState<boolean>(false);
+
+  const { mutate, isPending } = useCreateCourse();
 
   const form = useForm<AddCourseSchema>({
     resolver: zodResolver(formSchema),
@@ -82,15 +88,30 @@ export function AddCourseDialog() {
   });
 
   const onSubmit = (values: AddCourseSchema) => {
-    if (values.is_free) {
-      values.price = undefined;
-      values.discount = undefined;
-    }
-    mutate({ data: values });
-  };
+    // Ensure free courses have no price or discount
+    const payload = {
+      ...values,
+      price: values.is_free ? undefined : values.price,
+      discount: values.is_free ? undefined : values.discount,
+    };
+
+    mutate(
+      { data: payload },
+      {
+        onSuccess: () => {
+          refetch();
+          setOpen(false);
+          form.reset(); 
+        },
+        onError: () => {
+          setOpen(true);
+        },
+      }
+    );
+  }; 
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button>
           <Plus className="h-4 w-4 mr-2" />
@@ -338,7 +359,15 @@ export function AddCourseDialog() {
               <DialogClose asChild>
                 <Button variant="outline">Cancel</Button>
               </DialogClose>
-              <Button type="submit">Save Course</Button>
+              <Button type="submit" disabled={isPending}>
+                {isPending ? (
+                  <>
+                    Saving <Loader2 className="ml-2 h-4 w-4 animate-spin" />
+                  </>
+                ) : (
+                  "Save Course"
+                )}
+              </Button>
             </DialogFooter>
           </form>
         </Form>
