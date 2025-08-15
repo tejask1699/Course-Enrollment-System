@@ -56,7 +56,7 @@ export const studentItems = [
   },
   {
     title: "Course Catalog",
-    url: "/user/catalog",
+    url: "/user/course",
     icon: BookOpen,
     description: "Browse courses",
     badge: "New",

@@ -1,6 +1,7 @@
 import { CourseSchema } from "@/app/(main)/admin/courses/page";
 import { AddCourseSchema } from "@/components/courses/course.modal";
 import { StudentsData } from "@/components/students/columns";
+import { EnrollCourse } from "@/types/course-interface";
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 
 interface AxiosOptions {
@@ -54,12 +55,25 @@ class ApiClient {
     });
   }
 
-  async getCourse() : Promise<CourseSchema>{
+  async getCourse(): Promise<CourseSchema> {
     return this.request(`/api/courses`, { method: "get" });
+  }
+
+  async getCourseById(courseId: string): Promise<CourseSchema> {
+    return this.request(`/api/courses/${courseId}`, { method: "get" });
   }
 
   async getStudents(): Promise<StudentsData> {
     return this.request(`/api/students`, { method: "get" });
+  }
+
+  //enroll course
+
+  async enrollCourse(data: EnrollCourse):Promise<EnrollCourse> {
+    return this.request(`/api/assign-courses`, {
+      method: "post",
+      body: data,
+    });
   }
 }
 

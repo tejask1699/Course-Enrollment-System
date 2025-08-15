@@ -1,22 +1,25 @@
-'use client'
+"use client";
 
-import React, { useState } from 'react'
+import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Search, Star, Clock, Users } from "lucide-react";
 import { useGetCourse } from "@/hooks/use-courses";
+import { useRouter } from "next/navigation";
 
 const CourseCard = () => {
   const { data } = useGetCourse();
+  const router = useRouter();
   const [search, setSearch] = useState("");
 
   // Filter courses based on search term
   const filteredCourses = Array.isArray(data)
-    ? data.filter(course =>
-        course.course_name.toLowerCase().includes(search.toLowerCase()) ||
-        course.course_description.toLowerCase().includes(search.toLowerCase())
+    ? data.filter(
+        (course) =>
+          course.course_name.toLowerCase().includes(search.toLowerCase()) ||
+          course.course_description.toLowerCase().includes(search.toLowerCase())
       )
     : [];
 
@@ -84,7 +87,10 @@ const CourseCard = () => {
                     <span>4.8</span>
                   </div>
                 </div>
-                <Button className="w-full">
+                <Button
+                  className="w-full"
+                  onClick={() => router.push(`/user/course/${course.id}`)}
+                >
                   {course.is_free
                     ? "Enroll Now"
                     : `Enroll Now - $${course.price}${

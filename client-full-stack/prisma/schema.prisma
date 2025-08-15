@@ -26,6 +26,8 @@ model User {
   password   String
   role       Role
   created_at DateTime @default(now())
+
+  Enrollment Enrollment[]
 }
 
 enum Levels {
@@ -35,13 +37,13 @@ enum Levels {
 }
 
 model Course {
-  id                    String   @id @default(uuid())
+  id                    String       @id @default(uuid())
   course_name           String
-  course_code           String   @unique
+  course_code           String       @unique
   duration              Int
   levels                Levels
   course_description    String
-  created_at            DateTime @default(now())
+  created_at            DateTime     @default(now())
   demo_video_url        String?
   category              String
   max_students          Int
@@ -49,4 +51,17 @@ model Course {
   price                 Int?
   discount              Int?
   certificate_available Boolean
+  Enrollment            Enrollment[]
+}
+
+model Enrollment {
+  id         String   @id @default(uuid())
+  student    User     @relation(fields: [studentId], references: [id])
+  studentId  String
+  course     Course   @relation(fields: [courseId], references: [id])
+  courseId   String
+  status     String   @default("enrolled")
+  enrolledAt DateTime @default(now())
+
+  @@unique([studentId, courseId])
 }

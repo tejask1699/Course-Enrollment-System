@@ -12,6 +12,7 @@ export interface CourseSchema {
   id: string;
   course_name: string;
   course_code: string;
+  course_description:string
   duration: number;
   levels: Levels;
   created_at: string;
