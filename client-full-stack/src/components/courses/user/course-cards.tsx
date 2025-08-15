@@ -93,13 +93,16 @@ const CourseCard = () => {
                   </div>
                 </div>
                 {course.enrolled ? (
-                  <Button disabled className="w-full">
+                  <Button 
+                  className="w-full"
+                  onClick={() => router.push(`/user/course/${course.id}?enrolled=${course.enrolled}`)}
+                  >
                     Enrolled
                   </Button>
                 ) : (
                   <Button
                     className="w-full"
-                    onClick={() => router.push(`/user/course/${course.id}`)}
+                    onClick={() => router.push(`/user/course/${course.id}?enrolled=${course.enrolled}`)}
                   >
                     {course.is_free
                       ? "Enroll Now"

@@ -67,7 +67,7 @@ const Login = () => {
         setValue('email', userData.email)
         setValue('password', userData.password)
 
-        // handleSubmit(onSubmit)()
+        handleSubmit(onSubmit)()
     }
 
     return (

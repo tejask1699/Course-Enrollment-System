@@ -3,13 +3,17 @@
 import { CourseEnrollment } from "@/components/courses/user/enrollment";
 import { EnrollmentSkeleton } from "@/components/courses/user/skeleton";
 import { useGetCourseById } from "@/hooks/use-courses";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import React from "react";
 import { Badge } from "@/components/ui/badge";
+import EnrolledCourse from "@/components/courses/user/enrolled-course";
 
 const EnrollmentPage = () => {
   const { id } = useParams();
   const courseId = typeof id === "string" ? id : "";
+
+  const searchParam = useSearchParams();
+  const enrolled = searchParam.get("enrolled") || false;
   const { data, isLoading } = useGetCourseById(courseId);
 
   if (isLoading) {
@@ -32,7 +36,10 @@ const EnrollmentPage = () => {
       </div>
 
       {/* Enrollment Component */}
-      <CourseEnrollment course={data} />
+      {!enrolled && <CourseEnrollment course={data} />}
+
+      {/* After Enrollment */}
+      {enrolled && <EnrolledCourse/>}
     </div>
   );
 };

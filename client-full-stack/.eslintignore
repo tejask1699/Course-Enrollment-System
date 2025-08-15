@@ -1,0 +1,8 @@
+# Ignore Prisma generated client & WASM files
+src/generated/
+prisma/generated/
+node_modules/
+
+# Optional: ignore build outputs
+.next/
+out/
