@@ -41,6 +41,12 @@ type CreateEnrollCourse = {
   data: EnrollCourse;
 };
 
+export const useGetStudentCourse = (studentId:string) => {
+  return useQuery({
+    queryKey: ["get-student-courses"],
+    queryFn: () => apiClient.getStudentCourse(studentId),
+  });
+};
 
 export const useEnrollCourse = (): UseMutationResult<
   EnrollCourse,

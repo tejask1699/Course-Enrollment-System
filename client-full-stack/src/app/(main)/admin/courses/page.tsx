@@ -23,6 +23,7 @@ export interface CourseSchema {
   price?: number;
   discount?: number;
   certificate_available: boolean;
+  enrolled?:boolean
 }
 
 export default function CoursesPage() {

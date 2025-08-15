@@ -9,7 +9,6 @@ import {
   ChevronUp,
   Play,
   Clock,
-  Heart,
   BarChart3,
 } from "lucide-react";
 import { chapters } from "@/types/course-data";
@@ -77,11 +76,11 @@ export const CourseEnrollment = ({ course }: CourseCurriculumModalProps) => {
   const { mutate } = useEnrollCourse();
 
   const handleEnrollment = () => {
-    const studentId = localStorage.getItem("id") || "";
+    const studentId = localStorage.getItem("userID") || "";
     const courseId = course.id;
 
     mutate(
-      { data: { studentId, courseId } }, // matches CreateEnrollCourse
+      { data: { userId: studentId, courseId } },
       {
         onSuccess: () => {
           console.log("Enrolled successfully");
@@ -93,7 +92,7 @@ export const CourseEnrollment = ({ course }: CourseCurriculumModalProps) => {
     );
   };
   return (
-    <div className="grid grid-cols-2 h-full">
+    <div className="grid grid-cols-2 h-full border rounded-md">
       {/* Left Panel - Course Content */}
       <div className="flex flex-col">
         {/* Tabs */}
@@ -220,13 +219,11 @@ export const CourseEnrollment = ({ course }: CourseCurriculumModalProps) => {
           {/* Pricing */}
           <div className="space-y-4">
             <div className="flex items-baseline space-x-2">
-              <span className="text-2xl font-bold">
-                US${adaptedCourse.price}
-              </span>
+              <span className="text-2xl font-bold">₹{adaptedCourse.price}</span>
               {adaptedCourse.originalPrice && (
                 <>
                   <span className="text-lg text-muted-foreground line-through">
-                    US${adaptedCourse.originalPrice}
+                    ₹{adaptedCourse.originalPrice}
                   </span>
                   <Badge variant="destructive" className="text-xs">
                     {discountPercentage}% OFF
@@ -242,10 +239,7 @@ export const CourseEnrollment = ({ course }: CourseCurriculumModalProps) => {
               >
                 Buy now
               </Button>
-              <Button variant="outline" className="w-full bg-transparent">
-                <Heart className="h-4 w-4 mr-2" />
-                Add to wishlist
-              </Button>
+             
             </div>
           </div>
 

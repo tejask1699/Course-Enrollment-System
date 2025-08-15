@@ -32,7 +32,6 @@ export function AppSidebar() {
     }
   }, []);
 
-
   const isAdmin = userRole === "admin";
   const mainItems = isAdmin ? adminItems : studentItems;
 
@@ -181,7 +180,7 @@ export function AppSidebar() {
                         href={item.url}
                         className={clsx(
                           "group flex items-center gap-3 p-10 text-sm font-medium rounded-xl transition-all duration-200 relative overflow-hidden",
-                          pathname === item.url
+                          pathname.startsWith(item.url)
                             ? "bg-white shadow-md text-gray-900 border border-gray-200"
                             : "text-gray-700 hover:bg-white hover:shadow-sm"
                         )}
@@ -192,11 +191,10 @@ export function AppSidebar() {
                             className={`absolute inset-0 bg-gradient-to-r ${item.gradient} opacity-5 rounded-xl`}
                           />
                         )}
-
                         <div
                           className={clsx(
                             "relative z-10 p-2 rounded-lg transition-colors",
-                            pathname === item.url
+                            pathname.startsWith(item.url)
                               ? `bg-gradient-to-r ${item.gradient} text-white`
                               : "bg-gray-100 text-gray-600 group-hover:bg-gray-200"
                           )}

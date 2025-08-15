@@ -69,7 +69,12 @@ class ApiClient {
 
   //enroll course
 
-  async enrollCourse(data: EnrollCourse):Promise<EnrollCourse> {
+  async getStudentCourse(studentId: string): Promise<CourseSchema> {
+    return this.request(`/api/student-course?studentId=${studentId}`, {
+      method: "get",
+    });
+  }
+  async enrollCourse(data: EnrollCourse): Promise<EnrollCourse> {
     return this.request(`/api/assign-courses`, {
       method: "post",
       body: data,

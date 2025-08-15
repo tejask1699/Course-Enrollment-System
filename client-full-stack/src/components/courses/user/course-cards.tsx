@@ -1,20 +1,25 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Search, Star, Clock, Users } from "lucide-react";
-import { useGetCourse } from "@/hooks/use-courses";
+import { useGetStudentCourse } from "@/hooks/use-courses";
 import { useRouter } from "next/navigation";
 
 const CourseCard = () => {
-  const { data } = useGetCourse();
   const router = useRouter();
+  const [studentId, setStudentId] = useState("");
   const [search, setSearch] = useState("");
 
-  // Filter courses based on search term
+  useEffect(() => {
+    const id = localStorage.getItem("userID");
+    if (id) setStudentId(id);
+  }, []);
+  const { data } = useGetStudentCourse(studentId);
+
   const filteredCourses = Array.isArray(data)
     ? data.filter(
         (course) =>
@@ -87,16 +92,22 @@ const CourseCard = () => {
                     <span>4.8</span>
                   </div>
                 </div>
-                <Button
-                  className="w-full"
-                  onClick={() => router.push(`/user/course/${course.id}`)}
-                >
-                  {course.is_free
-                    ? "Enroll Now"
-                    : `Enroll Now - $${course.price}${
-                        course.discount ? ` (-${course.discount}%)` : ""
-                      }`}
-                </Button>
+                {course.enrolled ? (
+                  <Button disabled className="w-full">
+                    Enrolled
+                  </Button>
+                ) : (
+                  <Button
+                    className="w-full"
+                    onClick={() => router.push(`/user/course/${course.id}`)}
+                  >
+                    {course.is_free
+                      ? "Enroll Now"
+                      : `Enroll Now - ₹${course.price}${
+                          course.discount ? ` (-${course.discount}%)` : ""
+                        }`}
+                  </Button>
+                )}
               </CardContent>
             </Card>
           ))
