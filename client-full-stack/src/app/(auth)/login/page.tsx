@@ -40,7 +40,7 @@ const Login = () => {
                 localStorage.setItem("role", Userdata.role)
                 setLoading(false)
                 toast.success("Login successful")
-                Userdata.role === 'admin' ? router.push('/admin/dashboard') : router.push('/dashboard')
+                Userdata.role === 'admin' ? router.push('/admin/dashboard') : router.push('/user/dashboard')
 
             } else {
                 toast.error("Login failed. Please check your credentials.")
@@ -62,12 +62,12 @@ const Login = () => {
         const userData =
             role === "admin"
                 ? { email: "t.kelaskar16@gmail.com", password: "123456" }
-                : { email: "t.kelaskarStud16@gmail.com", password: "tk123456" }
+                : { email: "t13@gmail.com", password: "123456" }
 
         setValue('email', userData.email)
         setValue('password', userData.password)
 
-        handleSubmit(onSubmit)()
+        // handleSubmit(onSubmit)()
     }
 
     return (

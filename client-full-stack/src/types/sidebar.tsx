@@ -48,7 +48,7 @@ export const adminItems = [
 export const studentItems = [
   {
     title: "Dashboard",
-    url: "/user",
+    url: "/user/dashboard",
     icon: GraduationCap,
     description: "Current courses",
     progress: 65,

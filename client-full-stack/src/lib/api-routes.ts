@@ -1,3 +1,4 @@
+import { CourseSchema } from "@/app/(main)/admin/courses/page";
 import { AddCourseSchema } from "@/components/courses/course.modal";
 import { StudentsData } from "@/components/students/columns";
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
@@ -53,7 +54,7 @@ class ApiClient {
     });
   }
 
-  async getCourse() {
+  async getCourse() : Promise<CourseSchema>{
     return this.request(`/api/courses`, { method: "get" });
   }
 
