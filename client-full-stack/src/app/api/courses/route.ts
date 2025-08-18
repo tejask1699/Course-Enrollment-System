@@ -33,6 +33,8 @@ export async function POST(req: NextRequest) {
       price,
       discount,
       certificate_available,
+      chapters,
+      notes
     } = await req.json();
 
     if (!course_code || !course_name) {
@@ -66,6 +68,8 @@ export async function POST(req: NextRequest) {
         price,
         discount,
         certificate_available,
+        chapters,
+        notes
       },
     });
 

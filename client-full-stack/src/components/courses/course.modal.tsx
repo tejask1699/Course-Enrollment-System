@@ -2,18 +2,18 @@
 
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { useFieldArray, useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { Loader2, Plus } from "lucide-react";
 import { useCreateCourse } from "@/hooks/use-courses";
 import {
@@ -50,14 +50,25 @@ const formSchema = z.object({
   course_description: z
     .string()
     .min(10, "Description must be at least 10 characters"),
-
-  // Extra fields
   category: z.string().min(2, "Category is required"),
   max_students: z.number().positive("Must be greater than 0"),
   is_free: z.boolean(),
   price: z.number().nonnegative().optional(),
   discount: z.number().min(0).max(100).optional(),
   certificate_available: z.boolean(),
+  chapters: z
+    .array(
+      z.object({
+        chapter: z.string().min(1, "Chapter title required"),
+        value: z.string().min(1, "Chapter content required"),
+      })
+    ),
+  notes: z
+    .array(
+      z.object({
+        value: z.string().min(1, "Notes is required"),
+      })
+    ),
 });
 
 export type AddCourseSchema = z.infer<typeof formSchema>;
@@ -84,9 +95,24 @@ export function AddCourseDialog({ refetch }: Props) {
       price: undefined,
       discount: undefined,
       certificate_available: false,
+      chapters: [{ chapter: "", value: "" }],
+      notes: [{ value: "" }],
     },
   });
+  const { control } = form;
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "chapters",
+  });
 
+  const {
+    fields: notes_fields,
+    append: notes_append,
+    remove: notes_remove,
+  } = useFieldArray({
+    control,
+    name: "notes",
+  });
   const onSubmit = (values: AddCourseSchema) => {
     // Ensure free courses have no price or discount
     const payload = {
@@ -101,34 +127,37 @@ export function AddCourseDialog({ refetch }: Props) {
         onSuccess: () => {
           refetch();
           setOpen(false);
-          form.reset(); 
+          form.reset();
         },
         onError: () => {
           setOpen(true);
         },
       }
     );
-  }; 
+  };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
+    <Sheet open={open} onOpenChange={setOpen}>
+      <SheetTrigger asChild>
         <Button>
           <Plus className="h-4 w-4 mr-2" />
           Add Course
         </Button>
-      </DialogTrigger>
+      </SheetTrigger>
 
-      <DialogContent className="sm:max-w-5xl">
-        <DialogHeader>
-          <DialogTitle>Add New Course</DialogTitle>
-          <DialogDescription>
+      <SheetContent className="sm:max-w-5xl overflow-y-auto">
+        <SheetHeader>
+          <SheetTitle>Add New Course</SheetTitle>
+          <SheetDescription>
             Fill in the details for the new course. Click save when you're done.
-          </DialogDescription>
-        </DialogHeader>
+          </SheetDescription>
+        </SheetHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="space-y-6 p-6"
+          >
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4">
               {/* Course Name */}
               <FormField
@@ -355,10 +384,130 @@ export function AddCourseDialog({ refetch }: Props) {
               />
             </div>
 
-            <DialogFooter>
-              <DialogClose asChild>
+            {/* Chapters Section */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold">Chapters</h3>
+
+              {fields.map((item, index) => (
+                <div key={item.id} className="border p-4 rounded-lg">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {/* Chapter Title */}
+                    <FormField
+                      control={form.control}
+                      name={`chapters.${index}.chapter`}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Chapter Title</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder={`Chapter ${index + 1}`}
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    {/* Chapter Content */}
+                    <FormField
+                      control={form.control}
+                      name={`chapters.${index}.value`}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Chapter Content</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="e.g. Intro to this chapter"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  {/* Remove Button aligned right */}
+                  <div className="flex justify-end mt-3">
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => remove(index)}
+                      className="w-fit"
+                    >
+                      Remove
+                    </Button>
+                  </div>
+                </div>
+              ))}
+
+              {/* Add Chapter Button */}
+              <Button
+                type="button"
+                onClick={() => append({ chapter: "", value: "" })}
+                variant="outline"
+              >
+                + Add Chapter
+              </Button>
+            </div>
+
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold">Notes</h3>
+
+              {notes_fields.map((item, index) => (
+                <div key={item.id} className="border p-4 rounded-lg">
+                  <div className="grid grid-cols-1 gap-4">
+                    {/* Notes */}
+                    <FormField
+                      control={form.control}
+                      name={`notes.${index}.value`}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Notes</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder={`Notes ${index + 1}`}
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  {/* Remove Button aligned right */}
+                  <div className="flex justify-end mt-3">
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => notes_remove(index)}
+                      className="w-fit"
+                    >
+                      Remove
+                    </Button>
+                  </div>
+                </div>
+              ))}
+
+              {/* Add Notes Button */}
+              <Button
+                type="button"
+                onClick={() => notes_append({ value: "" })}
+                variant="outline"
+              >
+                + Add Notes
+              </Button>
+            </div>
+
+            <SheetFooter>
+              <div className="flex justify-end items-baseline gap-4">
+                <SheetClose asChild>
                 <Button variant="outline">Cancel</Button>
-              </DialogClose>
+              </SheetClose>
               <Button type="submit" disabled={isPending}>
                 {isPending ? (
                   <>
@@ -368,10 +517,11 @@ export function AddCourseDialog({ refetch }: Props) {
                   "Save Course"
                 )}
               </Button>
-            </DialogFooter>
+              </div>
+            </SheetFooter>
           </form>
         </Form>
-      </DialogContent>
-    </Dialog>
+      </SheetContent>
+    </Sheet>
   );
 }

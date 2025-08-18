@@ -52,6 +52,7 @@ model Course {
   price                 Int?
   discount              Int?
   certificate_available Boolean
+  chapters              Json?
   notes                 Json?
   Enrollment            Enrollment[]
   Achievement           Achievement[]
