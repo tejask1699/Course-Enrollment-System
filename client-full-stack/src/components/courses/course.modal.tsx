@@ -59,15 +59,14 @@ const formSchema = z.object({
   certificate_available: z.boolean(),
   chapters: z.array(
     z.object({
-      id: z.string(),
+     
       title: z.string().min(1, "Chapter title required"),
       videoCount: z.number().nonnegative(),
-      totalDuration: z.string().min(1, "Duration required"),
+      totalDuration: z.number().nonnegative(),
       lessons: z.array(
         z.object({
-          id: z.string(),
           title: z.string().min(1, "Lesson title required"),
-          duration: z.string().min(1, "Duration required"),
+          duration: z.number().nonnegative(),
           isPreview: z.boolean().optional(),
         })
       ),
@@ -107,12 +106,11 @@ export function AddCourseDialog({ refetch }: Props) {
       certificate_available: false,
       chapters: [
         {
-          id: uuidv4(),
           title: "",
           videoCount: 0,
-          totalDuration: "",
+          totalDuration: 0,
           lessons: [
-            { id: uuidv4(), title: "", duration: "", isPreview: false },
+            { title: "", duration: 0, isPreview: false },
           ],
         },
       ],
@@ -460,7 +458,14 @@ export function AddCourseDialog({ refetch }: Props) {
                         <FormItem>
                           <FormLabel>Total Duration</FormLabel>
                           <FormControl>
-                            <Input placeholder="e.g. 1h 20m" {...field} />
+                            <Input
+                            type="number"
+                              min={0}
+                              {...field}
+                              onChange={(e) =>
+                                field.onChange(Number(e.target.value))
+                              }
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -517,8 +522,12 @@ export function AddCourseDialog({ refetch }: Props) {
                                       <FormLabel>Duration</FormLabel>
                                       <FormControl>
                                         <Input
-                                          placeholder="e.g. 15m"
-                                          {...field}
+                                          type="number"
+                              min={0}
+                              {...field}
+                              onChange={(e) =>
+                                field.onChange(Number(e.target.value))
+                              }
                                         />
                                       </FormControl>
                                       <FormMessage />
@@ -543,9 +552,8 @@ export function AddCourseDialog({ refetch }: Props) {
                               variant="outline"
                               onClick={() =>
                                 appendLesson({
-                                  id: uuidv4(),
                                   title: "",
-                                  duration: "",
+                                  duration: 0,
                                   isPreview: false,
                                 })
                               }
@@ -576,15 +584,13 @@ export function AddCourseDialog({ refetch }: Props) {
                 variant="outline"
                 onClick={() =>
                   append({
-                    id: uuidv4(),
                     title: "",
                     videoCount: 0,
-                    totalDuration: "",
+                    totalDuration: 0,
                     lessons: [
                       {
-                        id: uuidv4(),
                         title: "",
-                        duration: "",
+                        duration: 0,
                         isPreview: false,
                       },
                     ],
