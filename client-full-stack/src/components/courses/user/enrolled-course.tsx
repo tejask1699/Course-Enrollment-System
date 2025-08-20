@@ -15,8 +15,8 @@ import {
   Star,
   Target,
 } from "lucide-react";
-import { chapters } from "@/types/course-data";
 import { useState, useEffect } from "react";
+import { Chapter, CourseSchema } from "@/types/course-data";
 
 interface CompletedLessons {
   [key: string]: boolean;
@@ -31,7 +31,13 @@ interface Achievement {
   requirement: number;
 }
 
-const EnrolledCourse = () => {
+interface EnrolledCourseProps {
+  course: CourseSchema;
+}
+
+const EnrolledCourse = ({ course }: EnrolledCourseProps) => {
+  const chapters = course.chapters ?? [];
+
   const [expandedChapters, setExpandedChapters] = useState<Set<string>>(
     new Set([chapters[0]?.id])
   );
@@ -109,7 +115,7 @@ const EnrolledCourse = () => {
         return { ...achievement, unlocked: shouldUnlock };
       })
     );
-  }, [completedLessons, completedCount, progressPercentage]);
+  }, [completedLessons, completedCount, progressPercentage, chapters]);
 
   const toggleChapter = (chapterId: string) => {
     const newExpanded = new Set(expandedChapters);
@@ -128,9 +134,9 @@ const EnrolledCourse = () => {
     }));
   };
 
-  const getChapterProgress = (chapter: any) => {
+  const getChapterProgress = (chapter: Chapter) => {
     const completedInChapter = chapter.lessons.filter(
-      (lesson: any) => completedLessons[lesson.id]
+      (lesson) => completedLessons[lesson.id]
     ).length;
     return Math.round((completedInChapter / chapter.lessons.length) * 100);
   };
@@ -142,9 +148,9 @@ const EnrolledCourse = () => {
         <div className="px-6 py-4">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h1 className="text-2xl font-bold">Vue.js Complete Course</h1>
+              <h1 className="text-2xl font-bold">{course.course_name}</h1>
               <p className="text-muted-foreground">
-                Master Vue.js from basics to advanced
+                {course.course_description}
               </p>
             </div>
             <div className="text-right">

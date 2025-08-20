@@ -13,7 +13,7 @@ const EnrollmentPage = () => {
   const courseId = typeof id === "string" ? id : "";
 
   const searchParam = useSearchParams();
-  const enrolled = searchParam.get("enrolled") || false;
+  const enrolled = searchParam.get("enrolled") || '';
   const { data, isLoading } = useGetCourseById(courseId);
 
   if (isLoading) {
@@ -36,10 +36,10 @@ const EnrollmentPage = () => {
       </div>
 
       {/* Enrollment Component */}
-      {!enrolled && <CourseEnrollment course={data} />}
+      {enrolled === 'false' && <CourseEnrollment course={data} />}
 
       {/* After Enrollment */}
-      {enrolled && <EnrolledCourse/>}
+      {enrolled === 'true' && <EnrolledCourse course={data}/>}
     </div>
   );
 };

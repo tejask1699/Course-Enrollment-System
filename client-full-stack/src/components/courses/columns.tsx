@@ -1,6 +1,6 @@
 "use client";
 
-import { CourseSchema } from "@/app/(main)/admin/courses/page";
+import { CourseSchema } from "@/types/course-data";
 import { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns"; // npm install date-fns
 

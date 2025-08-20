@@ -7,24 +7,8 @@ import { AddCourseDialog, Levels } from "@/components/courses/course.modal";
 import { useGetCourse } from "@/hooks/use-courses";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
+import { CourseSchema } from "@/types/course-data";
 
-export interface CourseSchema {
-  id: string;
-  course_name: string;
-  course_code: string;
-  course_description:string
-  duration: number;
-  levels: Levels;
-  created_at: string;
-  demo_video_url?: string;
-  category: string;
-  max_students: number;
-  is_free: boolean;
-  price?: number;
-  discount?: number;
-  certificate_available: boolean;
-  enrolled?:boolean
-}
 
 export default function CoursesPage() {
   const [searchTerm, setSearchTerm] = useState("");

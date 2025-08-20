@@ -14,7 +14,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { Loader2, Plus } from "lucide-react";
+import { Loader2, Plus, Trash, Trash2 } from "lucide-react";
 import { useCreateCourse } from "@/hooks/use-courses";
 import {
   Form,
@@ -35,6 +35,7 @@ import {
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useState } from "react";
+import { v4 as uuidv4 } from "uuid";
 
 export enum Levels {
   Beginner = "Beginner",
@@ -56,19 +57,28 @@ const formSchema = z.object({
   price: z.number().nonnegative().optional(),
   discount: z.number().min(0).max(100).optional(),
   certificate_available: z.boolean(),
-  chapters: z
-    .array(
-      z.object({
-        chapter: z.string().min(1, "Chapter title required"),
-        value: z.string().min(1, "Chapter content required"),
-      })
-    ),
-  notes: z
-    .array(
-      z.object({
-        value: z.string().min(1, "Notes is required"),
-      })
-    ),
+  chapters: z.array(
+    z.object({
+      id: z.string(),
+      title: z.string().min(1, "Chapter title required"),
+      videoCount: z.number().nonnegative(),
+      totalDuration: z.string().min(1, "Duration required"),
+      lessons: z.array(
+        z.object({
+          id: z.string(),
+          title: z.string().min(1, "Lesson title required"),
+          duration: z.string().min(1, "Duration required"),
+          isPreview: z.boolean().optional(),
+        })
+      ),
+    })
+  ),
+  notes: z.array(
+    z.object({
+      id: z.string(),
+      value: z.string().min(1, "Notes is required"),
+    })
+  ),
 });
 
 export type AddCourseSchema = z.infer<typeof formSchema>;
@@ -95,8 +105,18 @@ export function AddCourseDialog({ refetch }: Props) {
       price: undefined,
       discount: undefined,
       certificate_available: false,
-      chapters: [{ chapter: "", value: "" }],
-      notes: [{ value: "" }],
+      chapters: [
+        {
+          id: uuidv4(),
+          title: "",
+          videoCount: 0,
+          totalDuration: "",
+          lessons: [
+            { id: uuidv4(), title: "", duration: "", isPreview: false },
+          ],
+        },
+      ],
+      notes: [{ id: uuidv4(), value: "" }],
     },
   });
   const { control } = form;
@@ -388,19 +408,22 @@ export function AddCourseDialog({ refetch }: Props) {
             <div className="space-y-4">
               <h3 className="text-lg font-semibold">Chapters</h3>
 
-              {fields.map((item, index) => (
-                <div key={item.id} className="border p-4 rounded-lg">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    {/* Chapter Title */}
+              {fields.map((chapter, chapterIndex) => (
+                <div
+                  key={chapter.id}
+                  className="border p-4 rounded-lg space-y-4"
+                >
+                  {/* Chapter Info */}
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <FormField
                       control={form.control}
-                      name={`chapters.${index}.chapter`}
+                      name={`chapters.${chapterIndex}.title`}
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Chapter Title</FormLabel>
                           <FormControl>
                             <Input
-                              placeholder={`Chapter ${index + 1}`}
+                              placeholder={`Chapter ${chapterIndex + 1}`}
                               {...field}
                             />
                           </FormControl>
@@ -409,18 +432,35 @@ export function AddCourseDialog({ refetch }: Props) {
                       )}
                     />
 
-                    {/* Chapter Content */}
                     <FormField
                       control={form.control}
-                      name={`chapters.${index}.value`}
+                      name={`chapters.${chapterIndex}.videoCount`}
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Chapter Content</FormLabel>
+                          <FormLabel>Video Count</FormLabel>
                           <FormControl>
                             <Input
-                              placeholder="e.g. Intro to this chapter"
+                              type="number"
+                              min={0}
                               {...field}
+                              onChange={(e) =>
+                                field.onChange(Number(e.target.value))
+                              }
                             />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name={`chapters.${chapterIndex}.totalDuration`}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Total Duration</FormLabel>
+                          <FormControl>
+                            <Input placeholder="e.g. 1h 20m" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -428,26 +468,128 @@ export function AddCourseDialog({ refetch }: Props) {
                     />
                   </div>
 
-                  {/* Remove Button aligned right */}
-                  <div className="flex justify-end mt-3">
+                  {/* Lessons Section */}
+                  <div className="space-y-3">
+                    <h4 className="font-medium">Lessons</h4>
+
+                    <FormField
+                      control={form.control}
+                      name={`chapters.${chapterIndex}.lessons`}
+                      render={() => {
+                        const {
+                          fields: lessonFields,
+                          append: appendLesson,
+                          remove: removeLesson,
+                        } = useFieldArray({
+                          control,
+                          name: `chapters.${chapterIndex}.lessons`,
+                        });
+
+                        return (
+                          <div className="space-y-3">
+                            {lessonFields.map((lesson, lessonIndex) => (
+                              <div
+                                key={lesson.id}
+                                className="border p-3 rounded-lg grid grid-cols-1 sm:grid-cols-3 gap-3 items-end"
+                              >
+                                <FormField
+                                  control={form.control}
+                                  name={`chapters.${chapterIndex}.lessons.${lessonIndex}.title`}
+                                  render={({ field }) => (
+                                    <FormItem>
+                                      <FormLabel>Lesson Title</FormLabel>
+                                      <FormControl>
+                                        <Input
+                                          placeholder="Lesson title"
+                                          {...field}
+                                        />
+                                      </FormControl>
+                                      <FormMessage />
+                                    </FormItem>
+                                  )}
+                                />
+
+                                <FormField
+                                  control={form.control}
+                                  name={`chapters.${chapterIndex}.lessons.${lessonIndex}.duration`}
+                                  render={({ field }) => (
+                                    <FormItem>
+                                      <FormLabel>Duration</FormLabel>
+                                      <FormControl>
+                                        <Input
+                                          placeholder="e.g. 15m"
+                                          {...field}
+                                        />
+                                      </FormControl>
+                                      <FormMessage />
+                                    </FormItem>
+                                  )}
+                                />
+                                <div className="flex justify-end">
+                                  <Button
+                                    type="button"
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => removeLesson(lessonIndex)}
+                                  >
+                                    <Trash2 />
+                                  </Button>
+                                </div>
+                              </div>
+                            ))}
+
+                            <Button
+                              type="button"
+                              variant="outline"
+                              onClick={() =>
+                                appendLesson({
+                                  id: uuidv4(),
+                                  title: "",
+                                  duration: "",
+                                  isPreview: false,
+                                })
+                              }
+                            >
+                              + Add Lesson
+                            </Button>
+                          </div>
+                        );
+                      }}
+                    />
+                  </div>
+
+                  <div className="flex justify-end">
                     <Button
                       type="button"
-                      variant="destructive"
+                      variant="ghost"
                       size="sm"
-                      onClick={() => remove(index)}
-                      className="w-fit"
+                      onClick={() => remove(chapterIndex)}
                     >
-                      Remove
+                      <Trash2 />
                     </Button>
                   </div>
                 </div>
               ))}
 
-              {/* Add Chapter Button */}
               <Button
                 type="button"
-                onClick={() => append({ chapter: "", value: "" })}
                 variant="outline"
+                onClick={() =>
+                  append({
+                    id: uuidv4(),
+                    title: "",
+                    videoCount: 0,
+                    totalDuration: "",
+                    lessons: [
+                      {
+                        id: uuidv4(),
+                        title: "",
+                        duration: "",
+                        isPreview: false,
+                      },
+                    ],
+                  })
+                }
               >
                 + Add Chapter
               </Button>
@@ -482,12 +624,12 @@ export function AddCourseDialog({ refetch }: Props) {
                   <div className="flex justify-end mt-3">
                     <Button
                       type="button"
-                      variant="destructive"
+                      variant="ghost"
                       size="sm"
                       onClick={() => notes_remove(index)}
                       className="w-fit"
                     >
-                      Remove
+                      <Trash2 />
                     </Button>
                   </div>
                 </div>
@@ -496,7 +638,7 @@ export function AddCourseDialog({ refetch }: Props) {
               {/* Add Notes Button */}
               <Button
                 type="button"
-                onClick={() => notes_append({ value: "" })}
+                onClick={() => notes_append({ id: uuidv4(), value: "" })}
                 variant="outline"
               >
                 + Add Notes
@@ -506,17 +648,17 @@ export function AddCourseDialog({ refetch }: Props) {
             <SheetFooter>
               <div className="flex justify-end items-baseline gap-4">
                 <SheetClose asChild>
-                <Button variant="outline">Cancel</Button>
-              </SheetClose>
-              <Button type="submit" disabled={isPending}>
-                {isPending ? (
-                  <>
-                    Saving <Loader2 className="ml-2 h-4 w-4 animate-spin" />
-                  </>
-                ) : (
-                  "Save Course"
-                )}
-              </Button>
+                  <Button variant="outline">Cancel</Button>
+                </SheetClose>
+                <Button type="submit" disabled={isPending}>
+                  {isPending ? (
+                    <>
+                      Saving <Loader2 className="ml-2 h-4 w-4 animate-spin" />
+                    </>
+                  ) : (
+                    "Save Course"
+                  )}
+                </Button>
               </div>
             </SheetFooter>
           </form>

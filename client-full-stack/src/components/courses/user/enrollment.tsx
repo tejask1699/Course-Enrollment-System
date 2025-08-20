@@ -4,38 +4,19 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
-import {
-  ChevronDown,
-  ChevronUp,
-  Play,
-  Clock,
-  BarChart3,
-} from "lucide-react";
-import { chapters } from "@/types/course-data";
-import { CourseSchema } from "@/app/(main)/admin/courses/page";
+import { ChevronDown, ChevronUp, Play, Clock, BarChart3 } from "lucide-react";
 import { useEnrollCourse } from "@/hooks/use-courses";
-
-interface Lesson {
-  id: string;
-  title: string;
-  duration: string;
-  isPreview?: boolean;
-}
-
-interface Chapter {
-  id: string;
-  title: string;
-  videoCount: number;
-  totalDuration: string;
-  lessons: Lesson[];
-}
+import { CourseSchema } from "@/types/course-data";
+import { useRouter } from "next/navigation";
 
 interface CourseCurriculumModalProps {
   course: CourseSchema | undefined;
 }
 
 export const CourseEnrollment = ({ course }: CourseCurriculumModalProps) => {
-  if (!course) return;
+  if (!course) return null;
+  const router = useRouter();
+  const courseChapters = course.chapters ?? [];
 
   const adaptedCourse = {
     ...course,
@@ -43,8 +24,8 @@ export const CourseEnrollment = ({ course }: CourseCurriculumModalProps) => {
     originalPrice: course.discount
       ? (course.price ?? 0) + course.discount
       : null,
-    totalSections: chapters.length,
-    totalLectures: chapters.reduce((acc, c) => acc + c.lessons.length, 0),
+    totalSections: courseChapters.length,
+    totalLectures: courseChapters.reduce((acc, c) => acc + c.lessons.length, 0),
     totalDuration: `${course.duration ?? 0}h 00m`,
   };
 
@@ -52,10 +33,11 @@ export const CourseEnrollment = ({ course }: CourseCurriculumModalProps) => {
     "curriculum" | "description" | "reviews"
   >("curriculum");
   const [expandedChapters, setExpandedChapters] = useState<Set<string>>(
-    new Set([chapters[0]?.id])
+    new Set([courseChapters[0]?.id ?? "0"])
   );
 
-  const toggleChapter = (chapterId: string) => {
+  const toggleChapter = (chapterId?: string) => {
+    if (!chapterId) return;
     const newExpanded = new Set(expandedChapters);
     if (newExpanded.has(chapterId)) {
       newExpanded.delete(chapterId);
@@ -84,6 +66,7 @@ export const CourseEnrollment = ({ course }: CourseCurriculumModalProps) => {
       {
         onSuccess: () => {
           console.log("Enrolled successfully");
+          router.push("/user/course");
         },
         onError: (error) => {
           console.error("Enrollment failed", error);
@@ -91,11 +74,11 @@ export const CourseEnrollment = ({ course }: CourseCurriculumModalProps) => {
       }
     );
   };
+
   return (
     <div className="grid grid-cols-2 h-full border rounded-md">
-      {/* Left Panel - Course Content */}
+      {/* Left Panel */}
       <div className="flex flex-col">
-        {/* Tabs */}
         <div className="border-b bg-background px-6 py-4">
           <div className="flex space-x-8">
             {["curriculum", "description", "reviews"].map((tab) => (
@@ -114,7 +97,6 @@ export const CourseEnrollment = ({ course }: CourseCurriculumModalProps) => {
           </div>
         </div>
 
-        {/* Content Area */}
         <div className="flex-1 overflow-y-auto px-6 py-4">
           {activeTab === "curriculum" && (
             <div className="space-y-4">
@@ -128,11 +110,11 @@ export const CourseEnrollment = ({ course }: CourseCurriculumModalProps) => {
               </div>
 
               <div className="space-y-2">
-                {chapters.map((chapter) => (
-                  <Card key={chapter.id} className="border">
+                {courseChapters.map((chapter, idx) => (
+                  <Card key={chapter.id ?? idx} className="border">
                     <div
                       className="flex items-center justify-between p-4 cursor-pointer hover:bg-muted/50"
-                      onClick={() => toggleChapter(chapter.id)}
+                      onClick={() => toggleChapter(chapter.id ?? String(idx))}
                     >
                       <div className="flex-1">
                         <h4 className="font-medium">{chapter.title}</h4>
@@ -140,18 +122,18 @@ export const CourseEnrollment = ({ course }: CourseCurriculumModalProps) => {
                           {chapter.videoCount} Videos • {chapter.totalDuration}
                         </p>
                       </div>
-                      {expandedChapters.has(chapter.id) ? (
+                      {expandedChapters.has(chapter.id ?? String(idx)) ? (
                         <ChevronUp className="h-4 w-4" />
                       ) : (
                         <ChevronDown className="h-4 w-4" />
                       )}
                     </div>
 
-                    {expandedChapters.has(chapter.id) && (
+                    {expandedChapters.has(chapter.id ?? String(idx)) && (
                       <div className="border-t">
-                        {chapter.lessons.map((lesson) => (
+                        {chapter.lessons.map((lesson, lidx) => (
                           <div
-                            key={lesson.id}
+                            key={lesson.id ?? lidx}
                             className="flex items-center justify-between px-4 py-3 hover:bg-muted/30"
                           >
                             <div className="flex items-center space-x-3">
@@ -169,7 +151,7 @@ export const CourseEnrollment = ({ course }: CourseCurriculumModalProps) => {
                               </span>
                             </div>
                             <span className="text-sm text-muted-foreground">
-                              {lesson.duration}
+                              {lesson.duration}m
                             </span>
                           </div>
                         ))}
@@ -202,10 +184,9 @@ export const CourseEnrollment = ({ course }: CourseCurriculumModalProps) => {
         </div>
       </div>
 
-      {/* Right Panel - Course Preview & Purchase */}
+      {/* Right Panel */}
       <div className=" border-l bg-muted/20">
         <div className="p-6 space-y-6">
-          {/* Video Preview */}
           <div className="aspect-video bg-gray-800 rounded-lg flex items-center justify-center">
             <Button
               variant="ghost"
@@ -216,7 +197,6 @@ export const CourseEnrollment = ({ course }: CourseCurriculumModalProps) => {
             </Button>
           </div>
 
-          {/* Pricing */}
           <div className="space-y-4">
             <div className="flex items-baseline space-x-2">
               <span className="text-2xl font-bold">₹{adaptedCourse.price}</span>
@@ -239,11 +219,9 @@ export const CourseEnrollment = ({ course }: CourseCurriculumModalProps) => {
               >
                 Buy now
               </Button>
-             
             </div>
           </div>
 
-          {/* Course Stats */}
           <div className="space-y-3 pt-4 border-t">
             <div className="flex items-center space-x-3">
               <BarChart3 className="h-4 w-4 text-muted-foreground" />
