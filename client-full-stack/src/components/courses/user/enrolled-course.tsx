@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Chapter, CourseSchema } from "@/types/course-data";
+import { useLessonProgress } from "@/hooks/use-courses";
 
 interface CompletedLessons {
   [key: string]: boolean;
@@ -41,6 +42,8 @@ const EnrolledCourse = ({ course }: EnrolledCourseProps) => {
   const [expandedChapters, setExpandedChapters] = useState<Set<string>>(
     new Set([chapters[0]?.id])
   );
+
+  const leessonUpdate = useLessonProgress();
 
   const [completedLessons, setCompletedLessons] = useState<CompletedLessons>(
     {}
@@ -126,13 +129,46 @@ const EnrolledCourse = ({ course }: EnrolledCourseProps) => {
     }
     setExpandedChapters(newExpanded);
   };
+  const studentId = localStorage.getItem("userID") || "";
 
   const toggleLessonCompletion = (lessonId: string) => {
-    setCompletedLessons((prev) => ({
-      ...prev,
-      [lessonId]: !prev[lessonId],
-    }));
+    const newCompletedStatus = true;
+    const formattedData = {
+      studentId,
+      lessonId,
+      completed: newCompletedStatus,
+    };
+
+    leessonUpdate.mutate(
+      { data: formattedData },
+      {
+        onSuccess: () => {
+          setCompletedLessons((prev) => ({
+            ...prev,
+            [lessonId]: newCompletedStatus,
+          }));
+        },
+        onError: () => {
+          console.error("Failed to update lesson progress");
+        },
+      }
+    );
   };
+
+  useEffect(() => {
+    const initialCompleted: CompletedLessons = {};
+
+    course.chapters?.forEach((chapter) => {
+      chapter.lessons.forEach((lesson) => {
+        const progress = lesson.LessonProgress?.[0];
+        if (progress?.completed) {
+          initialCompleted[lesson.id] = true;
+        }
+      });
+    });
+
+    setCompletedLessons(initialCompleted);
+  }, [course]);
 
   const getChapterProgress = (chapter: Chapter) => {
     const completedInChapter = chapter.lessons.filter(

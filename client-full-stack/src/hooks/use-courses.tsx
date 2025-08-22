@@ -1,6 +1,6 @@
 import { AddCourseSchema } from "@/components/courses/course.modal";
 import { apiClient } from "@/lib/api-routes";
-import { EnrollCourse } from "@/types/course-interface";
+import { EnrollCourse, lessonProgessSchema } from "@/types/course-interface";
 import {
   useMutation,
   UseMutationResult,
@@ -41,7 +41,7 @@ type CreateEnrollCourse = {
   data: EnrollCourse;
 };
 
-export const useGetStudentCourse = (studentId:string) => {
+export const useGetStudentCourse = (studentId: string) => {
   return useQuery({
     queryKey: ["get-student-courses"],
     queryFn: () => apiClient.getStudentCourse(studentId),
@@ -55,5 +55,19 @@ export const useEnrollCourse = (): UseMutationResult<
 > => {
   return useMutation<EnrollCourse, Error, CreateEnrollCourse>({
     mutationFn: ({ data }) => apiClient.enrollCourse(data),
+  });
+};
+
+type lessonVariable = {
+  data: lessonProgessSchema;
+};
+
+export const useLessonProgress = (): UseMutationResult<
+  lessonProgessSchema,
+  Error,
+  lessonVariable
+> => {
+  return useMutation<lessonProgessSchema, Error, lessonVariable>({
+    mutationFn: ({ data }) => apiClient.lessonProgress(data),
   });
 };

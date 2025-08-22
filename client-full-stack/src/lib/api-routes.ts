@@ -1,8 +1,10 @@
-import { CourseSchema } from "@/app/(main)/admin/courses/page";
+
 import { AddCourseSchema } from "@/components/courses/course.modal";
 import { StudentsData } from "@/components/students/columns";
-import { EnrollCourse } from "@/types/course-interface";
+import { CourseSchema } from "@/types/course-data";
+import { EnrollCourse, lessonProgessSchema } from "@/types/course-interface";
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
+import { boolean, string } from "zod";
 
 interface AxiosOptions {
   method?: "get" | "post" | "put" | "delete" | "patch";
@@ -76,6 +78,15 @@ class ApiClient {
   }
   async enrollCourse(data: EnrollCourse): Promise<EnrollCourse> {
     return this.request(`/api/assign-courses`, {
+      method: "post",
+      body: data,
+    });
+  }
+
+  
+  //lesson Progress
+  async lessonProgress(data: lessonProgessSchema): Promise<lessonProgessSchema> {
+    return this.request(`/api/lesson-progress`, {
       method: "post",
       body: data,
     });

@@ -10,10 +10,23 @@ export async function GET(
 
     const course = await prisma.course.findUnique({
       where: { id: courseId },
+      include:{
+        chapters:{
+          include:{
+            lessons:{
+              include:{
+                LessonProgress:true
+              }
+            }
+          }
+        }
+        
+      }
     });
     if (!course)
       return NextResponse.json({ error: "Course not found" }, { status: 404 });
 
+   
     const formattedData = {
       ...course,
     };

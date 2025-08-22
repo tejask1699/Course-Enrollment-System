@@ -22,6 +22,7 @@ export interface Lesson {
   title: string;
   duration: string;
   isPreview?: boolean;
+  LessonProgress: LessonProgress[];
 }
 
 export interface Chapter {
@@ -30,4 +31,11 @@ export interface Chapter {
   videoCount: number;
   totalDuration: string;
   lessons: Lesson[];
+}
+export interface LessonProgress {
+  id: string;
+  studentId: string;
+  lessonId: string;
+  completed: boolean;
+  completedAt: string;
 }

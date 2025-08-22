@@ -27,6 +27,7 @@ export async function POST(req: NextRequest) {
       duration,
       levels,
       course_description,
+      demo_video_url,
       category,
       max_students,
       is_free,
@@ -34,7 +35,7 @@ export async function POST(req: NextRequest) {
       discount,
       certificate_available,
       chapters,
-      notes
+      notes,
     } = await req.json();
 
     if (!course_code || !course_name) {
@@ -62,14 +63,27 @@ export async function POST(req: NextRequest) {
         duration,
         levels,
         course_description,
+        demo_video_url,
         category,
         max_students,
         is_free,
         price,
         discount,
         certificate_available,
-        chapters,
-        notes
+        notes,
+        chapters: {
+          create: chapters.map((chapter: any) => ({
+            title: chapter.title,
+            video_count: chapter.video_count,
+            duration: chapter.duration,
+            lessons: {
+              create: chapter.lessons.map((lesson: any) => ({
+                title: lesson.title,
+                duration: lesson.duration,
+              })),
+            },
+          })),
+        },
       },
     });
 
@@ -77,6 +91,7 @@ export async function POST(req: NextRequest) {
       {
         message: "Course Create Successfully",
         course: {
+          id: newCourse.id,
           course_name: newCourse.course_name,
           course_code: newCourse.course_code,
           duration: newCourse.duration,
@@ -89,10 +104,9 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     console.error("Register Error:", error);
     return NextResponse.json(
-      {
-        message: "Internal Server Error",
-      },
+      { message: "Internal Server Error" },
       { status: 500 }
     );
   }
 }
+

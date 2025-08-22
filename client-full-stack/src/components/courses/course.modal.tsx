@@ -61,8 +61,8 @@ const formSchema = z.object({
     z.object({
      
       title: z.string().min(1, "Chapter title required"),
-      videoCount: z.number().nonnegative(),
-      totalDuration: z.number().nonnegative(),
+      video_count: z.number().nonnegative(),
+      duration: z.number().nonnegative(),
       lessons: z.array(
         z.object({
           title: z.string().min(1, "Lesson title required"),
@@ -107,8 +107,8 @@ export function AddCourseDialog({ refetch }: Props) {
       chapters: [
         {
           title: "",
-          videoCount: 0,
-          totalDuration: 0,
+          video_count: 0,
+          duration: 0,
           lessons: [
             { title: "", duration: 0, isPreview: false },
           ],
@@ -432,7 +432,7 @@ export function AddCourseDialog({ refetch }: Props) {
 
                     <FormField
                       control={form.control}
-                      name={`chapters.${chapterIndex}.videoCount`}
+                      name={`chapters.${chapterIndex}.video_count`}
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Video Count</FormLabel>
@@ -453,7 +453,7 @@ export function AddCourseDialog({ refetch }: Props) {
 
                     <FormField
                       control={form.control}
-                      name={`chapters.${chapterIndex}.totalDuration`}
+                      name={`chapters.${chapterIndex}.duration`}
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Total Duration</FormLabel>
@@ -585,8 +585,8 @@ export function AddCourseDialog({ refetch }: Props) {
                 onClick={() =>
                   append({
                     title: "",
-                    videoCount: 0,
-                    totalDuration: 0,
+                    video_count: 0,
+                    duration: 0,
                     lessons: [
                       {
                         title: "",
