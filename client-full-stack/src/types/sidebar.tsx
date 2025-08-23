@@ -63,14 +63,14 @@ export const studentItems = [
     gradient: "from-blue-500 to-purple-600"
   },
   
-  {
-    title: "Achievements",
-    url: "/user/achievements",
-    icon: Trophy,
-    description: "Badges & certificates",
-    count: 12,
-    gradient: "from-yellow-500 to-orange-600"
-  },
+  // {
+  //   title: "Achievements",
+  //   url: "/user/achievements",
+  //   icon: Trophy,
+  //   description: "Badges & certificates",
+  //   count: 12,
+  //   gradient: "from-yellow-500 to-orange-600"
+  // },
   {
     title: "Study Materials",
     url: "/user/materials",
