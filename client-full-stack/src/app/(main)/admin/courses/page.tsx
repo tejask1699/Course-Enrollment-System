@@ -3,7 +3,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DataTable } from "@/components/common/data-table";
 import { columns } from "@/components/courses/columns";
-import { AddCourseDialog, Levels } from "@/components/courses/course.modal";
+import { AddCourseDialog } from "@/components/courses/course.modal";
 import { useGetCourse } from "@/hooks/use-courses";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";

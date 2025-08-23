@@ -1,0 +1,30 @@
+{
+  "DS101": [
+    {
+      "id": "q1",
+      "question": "What does SDK stand for?",
+      "options": ["Software Development Kit", "System Data Kernel", "Storage Device Key", "Secure Data Keeper"],
+      "answer": "Software Development Kit"
+    },
+    {
+      "id": "q2",
+      "question": "Which language is mostly used for Android app development?",
+      "options": ["Swift", "Kotlin", "Python", "C#"],
+      "answer": "Kotlin"
+    }
+  ],
+  "WD101": [
+    {
+      "id": "q1",
+      "question": "What does CSS stand for?",
+      "options": ["Cascading Style Sheets", "Colorful Style Syntax", "Creative Style System", "Computer Style Sheet"],
+      "answer": "Cascading Style Sheets"
+    },
+    {
+      "id": "q2",
+      "question": "Which HTML tag is used to create a hyperlink?",
+      "options": ["<a>", "<link>", "<href>", "<url>"],
+      "answer": "<a>"
+    }
+  ]
+}

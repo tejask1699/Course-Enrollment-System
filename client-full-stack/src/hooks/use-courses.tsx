@@ -1,6 +1,6 @@
 import { AddCourseSchema } from "@/components/courses/course.modal";
 import { apiClient } from "@/lib/api-routes";
-import { EnrollCourse, lessonProgessSchema } from "@/types/course-interface";
+import { EnrollCourse, lessonProgessSchema, SubmitTestSchema } from "@/types/course-interface";
 import {
   useMutation,
   UseMutationResult,
@@ -69,5 +69,20 @@ export const useLessonProgress = (): UseMutationResult<
 > => {
   return useMutation<lessonProgessSchema, Error, lessonVariable>({
     mutationFn: ({ data }) => apiClient.lessonProgress(data),
+  });
+};
+
+type testVariable = {
+  data: SubmitTestSchema;
+};
+
+
+export const useSubmitTest = (): UseMutationResult<
+  SubmitTestSchema,
+  Error,
+  testVariable
+> => {
+  return useMutation<SubmitTestSchema, Error, testVariable>({
+    mutationFn: ({ data }) => apiClient.submitTest(data),
   });
 };
