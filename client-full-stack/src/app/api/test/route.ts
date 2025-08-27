@@ -11,22 +11,6 @@ export async function POST(req: NextRequest) {
                 { status: 400 }
             )
         }
-
-        // const existingTest = await prisma.test.findUnique(
-        //     {
-        //         where: {
-        //             studentId_courseId: { studentId, courseId }
-        //         }
-        //     }
-        // )
-
-        // if (existingTest) {
-        //     return NextResponse.json(
-        //         { message: "Student already completed test" },
-        //         { status: 400 }
-        //     );
-        // }
-
         await prisma.test.create({
             data: {
                 studentId,
