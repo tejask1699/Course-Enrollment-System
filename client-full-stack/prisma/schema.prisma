@@ -30,6 +30,7 @@ model User {
   Enrollment     Enrollment[]
   Achievement    Achievement[]
   LessonProgress LessonProgress[]
+  Test           Test[]
 }
 
 enum Levels {
@@ -57,6 +58,7 @@ model Course {
   chapters              Chapter[]
   Enrollment            Enrollment[]
   Achievement           Achievement[]
+  Test                  Test[]
 }
 
 model Chapter {
@@ -114,4 +116,23 @@ model Achievement {
   studentId String
   course    Course @relation(fields: [courseId], references: [id])
   courseId  String
+}
+
+model Test {
+  id String @id @default(uuid())
+
+  student   User   @relation(fields: [studentId], references: [id])
+  studentId String
+
+  course   Course @relation(fields: [courseId], references: [id])
+  courseId String
+
+  completed   Boolean   @default(false)
+  completedAt DateTime?
+
+  score Int
+
+  @@index([studentId])
+  @@index([courseId])
+  @@index([studentId, courseId])
 }

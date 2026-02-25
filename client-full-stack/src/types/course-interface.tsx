@@ -8,3 +8,10 @@ export interface lessonProgessSchema {
     lessonId:string
     completed:boolean
   }
+
+  export interface SubmitTestSchema {
+    studentId:string
+    courseId:string
+    completed:boolean
+    score:number
+  }

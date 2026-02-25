@@ -2,7 +2,7 @@
 import { AddCourseSchema } from "@/components/courses/course.modal";
 import { StudentsData } from "@/components/students/columns";
 import { CourseSchema } from "@/types/course-data";
-import { EnrollCourse, lessonProgessSchema } from "@/types/course-interface";
+import { EnrollCourse, lessonProgessSchema, SubmitTestSchema } from "@/types/course-interface";
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { boolean, string } from "zod";
 
@@ -86,6 +86,14 @@ class ApiClient {
   
   //lesson Progress
   async lessonProgress(data: lessonProgessSchema): Promise<lessonProgessSchema> {
+    return this.request(`/api/lesson-progress`, {
+      method: "post",
+      body: data,
+    });
+  }
+
+  //test
+   async submitTest(data: SubmitTestSchema): Promise<SubmitTestSchema> {
     return this.request(`/api/lesson-progress`, {
       method: "post",
       body: data,

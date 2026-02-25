@@ -1,10 +1,26 @@
+'use client'
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { Brain, Clock, CheckCircle, AlertCircle, Play } from 'lucide-react'
+import { useEffect, useState } from "react"
+import { useGetStudentCourse } from "@/hooks/use-courses"
+import { TestDialog } from "@/components/test/test-dialog"
 
 export default function PracticeTestsPage() {
+
+  const [studentId, setStudentId] = useState("");
+  
+    useEffect(() => {
+      const id = localStorage.getItem("userID");
+      if (id) setStudentId(id);
+    }, []);
+    const { data } = useGetStudentCourse(studentId);
+
+    const filterData = Array.isArray(data) ? data.filter((e) => e.enrolled === true) : [];
+
   return (
     <div className="flex flex-1 flex-col gap-4 p-6">
       <div className="flex items-center justify-between">
@@ -54,64 +70,44 @@ export default function PracticeTestsPage() {
           <CardTitle>Available Tests</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="flex items-center justify-between p-4 border rounded-lg">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                <Brain className="h-6 w-6 text-blue-600" />
-              </div>
-              <div className="flex-1">
-                <h4 className="font-medium">React Components Quiz</h4>
-                <p className="text-sm text-muted-foreground">Test your knowledge of React components</p>
-                <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
-                  <div className="flex items-center gap-1">
-                    <Clock className="h-4 w-4" />
-                    <span>15 minutes</span>
+          {filterData.map((course) => (
+            <div
+              key={course.id}
+              className="flex items-center justify-between p-4 border rounded-lg"
+            >
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                  <Brain className="h-6 w-6 text-blue-600" />
+                </div>
+                <div className="flex-1">
+                  <h4 className="font-medium">{course.course_name}</h4>
+                  <p className="text-sm text-muted-foreground">
+                    {course.course_description}
+                  </p>
+
+                  {/* you can use course.duration for time if needed */}
+                  <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
+                    <div className="flex items-center gap-1">
+                      <Clock className="h-4 w-4" />
+                      <span>{course.duration} minutes</span>
+                    </div>
+                    <span>{course.max_students} max students</span>
                   </div>
-                  <span>10 questions</span>
                 </div>
               </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <Badge className="bg-green-100 text-green-700">Available</Badge>
-              <Button>
-                <Play className="h-4 w-4 mr-2" />
-                Start Test
-              </Button>
-            </div>
-          </div>
-          
-          <div className="flex items-center justify-between p-4 border rounded-lg">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                <Brain className="h-6 w-6 text-purple-600" />
-              </div>
-              <div className="flex-1">
-                <h4 className="font-medium">JavaScript Fundamentals</h4>
-                <p className="text-sm text-muted-foreground">Basic JavaScript concepts and syntax</p>
-                <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
-                  <div className="flex items-center gap-1">
-                    <Clock className="h-4 w-4" />
-                    <span>20 minutes</span>
-                  </div>
-                  <span>15 questions</span>
-                </div>
+              <div className="flex items-center gap-2">
+                <Badge className="bg-green-100 text-green-700">Available</Badge>
+                <TestDialog courseCode={course.course_code} courseId={course.id} studentId={studentId} />
               </div>
             </div>
-            <div className="flex items-center gap-2">
-              <Badge className="bg-green-100 text-green-700">Available</Badge>
-              <Button>
-                <Play className="h-4 w-4 mr-2" />
-                Start Test
-              </Button>
-            </div>
-          </div>
+          ))}
         </CardContent>
       </Card>
 
       {/* Recent Results */}
       <Card>
         <CardHeader>
-          <CardTitle>Recent Results</CardTitle>
+          <CardTitle>Recent Results <span className="text-red-500">(Static Data)</span></CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex items-center justify-between p-4 border rounded-lg">
@@ -156,5 +152,8 @@ export default function PracticeTestsPage() {
         </CardContent>
       </Card>
     </div>
+
+
+
   )
 }
