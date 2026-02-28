@@ -22,3 +22,5 @@ Frontend & Backend: Next.js Fullstack (App Router)
 Database: Relational (PostgreSQL)
 
 Deployment: Vercel
+
+
